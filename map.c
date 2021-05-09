@@ -164,10 +164,9 @@ MapDataElement mapGet(Map map, MapKeyElement keyElement)
          return NULL;
      }
      
-     for (int i = 0; i < map->size; i++) {
-         if (map->compareKeyElements(keyElement, map->keys[i]) == 0) {
-             return map->data[i];
-         }
+     int i = mapGetIndex(map, keyElement);
+     if (i != -1) {
+         return map->data[i];
      }
      return NULL;
 }

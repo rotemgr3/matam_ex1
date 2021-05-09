@@ -204,7 +204,7 @@ static void mapAdd(Map map,MapKeyElement keyElement,MapDataElement new_data)
             break;
         }
     }
-    for(int j=map->size; j > i; j--){
+    for(int j=map->size; j > i; j--){ //shifts elements one index to the right
         map->keys[j]= map->keys[j-1];
         map->data[j]= map->data[j-1];
     }
@@ -257,7 +257,7 @@ MapResult mapRemove(Map map, MapKeyElement keyElement)
     assert(i>=0);
     map->freeKeyElement(map->keys[i]);
     map->freeDataElement(map->data[i]);
-    for(int j=i; j < map->size-1; j++){
+    for(int j=i; j < map->size-1; j++){ //shifts elememnts one index to the left
         map->keys[j]=map->keys[j+1];
         map->data[j]=map->data[j+1];
     }

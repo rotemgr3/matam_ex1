@@ -1,0 +1,1 @@
+/usr/local/bin/x86_64-unknown-linux-gnu-gcc-5.5.0 -std=c99 --pedantic-errors -Wall -Werror -g    -rdynamic CMakeFiles/map_prog.dir/map.c.o CMakeFiles/map_prog.dir/map_example_test.c.o  -o map_prog 

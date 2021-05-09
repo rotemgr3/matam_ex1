@@ -1,0 +1,12 @@
+[
+{
+  "directory": "/home/rotem.green/mtm/ex1/wet/build",
+  "command": "/usr/local/bin/x86_64-unknown-linux-gnu-gcc-5.5.0   -std=c99 --pedantic-errors -Wall -Werror -g   -o CMakeFiles/map_prog.dir/map.c.o   -c /home/rotem.green/mtm/ex1/wet/map.c",
+  "file": "/home/rotem.green/mtm/ex1/wet/map.c"
+},
+{
+  "directory": "/home/rotem.green/mtm/ex1/wet/build",
+  "command": "/usr/local/bin/x86_64-unknown-linux-gnu-gcc-5.5.0   -std=c99 --pedantic-errors -Wall -Werror -g   -o CMakeFiles/map_prog.dir/map_example_test.c.o   -c /home/rotem.green/mtm/ex1/wet/map_example_test.c",
+  "file": "/home/rotem.green/mtm/ex1/wet/map_example_test.c"
+}
+]

@@ -1,0 +1,5 @@
+{
+    "cmake.cmakePath": "/home/mtm/cmake-3.17.0-Linux-x86_64/bin/cmake",
+    "cmake.configureOnOpen": true,
+    "cmake.sourceDirectory": "${workspaceFolder}/."
+}

@@ -1,0 +1,38 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/rotem.green/mtm/ex1/wet/map.c
+stdio.h
+-
+stdlib.h
+-
+stdbool.h
+-
+assert.h
+-
+map.h
+/home/rotem.green/mtm/ex1/wet/map.h
+
+/home/rotem.green/mtm/ex1/wet/map.h
+stdbool.h
+-
+
+/home/rotem.green/mtm/ex1/wet/map_example_test.c
+test_utilities.h
+/home/rotem.green/mtm/ex1/wet/test_utilities.h
+stdlib.h
+-
+map.h
+/home/rotem.green/mtm/ex1/wet/map.h
+
+/home/rotem.green/mtm/ex1/wet/test_utilities.h
+stdbool.h
+-
+stdio.h
+-
+

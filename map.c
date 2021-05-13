@@ -81,7 +81,7 @@ static void copy_arr(void **src, void **dest, int size, void*(*copyFunction)(voi
     for (int i = 0; i < size; i++) {
         dest[i] = copyFunction(src[i]);
         if (dest[i] == NULL) {
-            *result = MAP_COPY_FAILURE;
+            *result = MAP_OUT_OF_MEMORY;
             return;
         }
     }
@@ -283,7 +283,8 @@ MapKeyElement mapGetNext(Map map)
     if (map->iterator >= map->size) {
         return NULL;
     }
- return map->keys[map->iterator++];
+    MapKeyElement key = map->copyKeyElement(map->keys[map->iterator++]);
+    return key;
 }
 
 MapResult mapClear(Map map)

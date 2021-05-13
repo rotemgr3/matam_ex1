@@ -16,6 +16,6 @@ set(MTM_FLAGS_RELEASE "${MTM_FLAGS_DEBUG} -DNDEBUG")
 set(CMAKE_C_FLAGS ${MTM_FLAGS_DEBUG})
 
 # Add the names of your source files here
-set(C_FILES map.h map.c map_example_test.c)
+set(C_FILES map.h map.c map_example_test.c test_utilities.h)
 
 add_executable(map_prog ${C_FILES})

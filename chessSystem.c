@@ -7,10 +7,25 @@
 #include "game.h"
 #include "tournament.h"
 
+#define NO_AVERAGE -1
 
 typedef struct chess_system_t {
     Map tournaments;
 } chess_system_t;
+
+static ChessResult updateWinnerStats(Tournament* tournament, int first_player,
+                         int second_player, Winner winner, int play_time);
+static void printToFile(Map players_ranked, FILE* file, ChessResult* result);
+static double FindMaxData(Map players_ranked, int *id);
+static Map computePlayersRank(ChessSystem chess, ChessResult* chess_result);
+static int computeGamesStats(Map games, double* avg_game_time);
+static ChessResult printTournamnentStats(Tournament* tournament, FILE* file);
+MapKeyElement copyKeyInt(MapKeyElement n);
+void freeInt(MapKeyElement n);
+MapKeyElement copyDouble(MapKeyElement n);
+int compareInts(MapKeyElement n1, MapKeyElement n2);
+void freeDouble(MapKeyElement n);
+
 
 ChessSystem chessCreate()
 {
@@ -50,7 +65,7 @@ ChessResult chessAddTournament (ChessSystem chess, int tournament_id,
     if(!checkLocation(tournament_location)) {
         return CHESS_INVALID_LOCATION;
     }
-    if(mapContains(chess->tournaments, tournament_id)){
+    if(mapContains(chess->tournaments, &tournament_id)){
         return CHESS_TOURNAMENT_ALREADY_EXISTS;
     }
     Tournament *new_tournament=tournamentCreate(copyKeyInt,
@@ -61,9 +76,10 @@ ChessResult chessAddTournament (ChessSystem chess, int tournament_id,
     if(new_tournament==NULL){
         return CHESS_OUT_OF_MEMORY;
     }
-    if(mapPut(chess->tournaments,tournament_id,new_tournament)!= MAP_SUCCESS){
+    if(mapPut(chess->tournaments, &tournament_id, new_tournament)!= MAP_SUCCESS){
         return CHESS_OUT_OF_MEMORY;//Already checked NULL arguments, so its has to be memory failure.
     }
+    tournamentDestroy(new_tournament);
     return CHESS_SUCCESS;
 }
 
@@ -76,10 +92,10 @@ ChessResult chessAddGame(ChessSystem chess, int tournament_id, int first_player,
     if (tournament_id < 0 || first_player < 0 || second_player < 0 || first_player == second_player) {
         return CHESS_INVALID_ID;
     }
-    if (!mapContains(chess->tournaments, tournament_id)) {
+    if (!mapContains(chess->tournaments, &tournament_id)) {
         return CHESS_TOURNAMENT_NOT_EXIST;
     }
-    Tournament* tournament = mapGet(chess->tournaments, tournament_id);
+    Tournament* tournament = mapGet(chess->tournaments, &tournament_id);
     assert(tournament != NULL);
     if (tournament-> winner != -1) {
         return CHESS_TOURNAMENT_ENDED;
@@ -90,15 +106,47 @@ ChessResult chessAddGame(ChessSystem chess, int tournament_id, int first_player,
     if (play_time < 0) {
         return CHESS_INVALID_PLAY_TIME;
     }
-    if (checkExeededGames(tournament, first_player) || checkExeededGames(tournament, second_player)){
+    if (checkExceededGames(tournament, first_player) || checkExceededGames(tournament, second_player)){
         return CHESS_EXCEEDED_GAMES;
     }
     Game *new_game = gameCreate(first_player, second_player, winner, play_time);
     if (new_game == NULL) {
         return CHESS_OUT_OF_MEMORY;
     }
-    if (mapPut(tournament, tournament->next_game_id++, new_game) != MAP_SUCCESS) {
+    if (mapPut(tournament->games, &(tournament->next_game_id), new_game) != MAP_SUCCESS) {
         return CHESS_OUT_OF_MEMORY; //Already checked NULL arguments, so its has to be memory failure.
+    }
+    tournament->next_game_id++;
+    gameDestroy(new_game);
+    return updateWinnerStats(tournament, first_player, second_player, winner, play_time);
+}
+
+static ChessResult updateWinnerStats(Tournament* tournament, int first_player,
+                         int second_player, Winner winner, int play_time)
+{
+    if (winner == FIRST_PLAYER) {
+        if (updateStats(tournament->players_stats, first_player, 1, 0, 0, play_time) != MAP_SUCCESS) {
+            return CHESS_OUT_OF_MEMORY;
+        }
+        if (updateStats(tournament->players_stats, second_player, 0, 1, 0, play_time) != MAP_SUCCESS) {
+            return CHESS_OUT_OF_MEMORY;
+        } 
+    }
+    else if (winner == SECOND_PLAYER) {
+        if (updateStats(tournament->players_stats, first_player, 0, 1, 0, play_time) != MAP_SUCCESS) {
+            return CHESS_OUT_OF_MEMORY;
+        }
+        if (updateStats(tournament->players_stats, second_player, 1, 0, 0, play_time) != MAP_SUCCESS) {
+             return CHESS_OUT_OF_MEMORY;
+        }
+    }
+    else {
+        if (updateStats(tournament->players_stats, first_player, 0, 0, 1, play_time) != MAP_SUCCESS) {
+             return CHESS_OUT_OF_MEMORY;
+        }
+        if (updateStats(tournament->players_stats, second_player, 0, 0, 1, play_time) != MAP_SUCCESS) {
+            return CHESS_OUT_OF_MEMORY;
+        }
     }
     return CHESS_SUCCESS;
 }
@@ -111,14 +159,10 @@ ChessResult chessRemoveTournament (ChessSystem chess, int tournament_id)
     if (tournament_id < 0) {
         return CHESS_INVALID_ID;
     }
-    if (!mapContains(chess->tournaments, tournament_id)) {
+    if (!mapContains(chess->tournaments, &tournament_id)) {
         return CHESS_TOURNAMENT_NOT_EXIST;
     }
-    MapResult result = mapRemove(chess->tournaments, tournament_id);
-    assert(result == MAP_SUCCESS);
-    //+++++++++++ NEED TO UPDATE STATISTICS!!!!! +++++++++++
-    //=======================================================
-
+    mapRemove(chess->tournaments, &tournament_id);
     return CHESS_SUCCESS;
 }
 ChessResult chessRemovePlayer(ChessSystem chess, int player_id)
@@ -135,6 +179,7 @@ ChessResult chessRemovePlayer(ChessSystem chess, int player_id)
         if(curr_tournament->winner == TOURNAMENT_NOT_ENDED){
             count += tournamentRemovePlayer(curr_tournament,player_id);
         }
+        free(iter);
     }
     if(!count){
         return CHESS_PLAYER_NOT_EXIST;
@@ -158,14 +203,225 @@ MapKeyElement copyKeyInt(MapKeyElement n) {
 void freeInt(MapKeyElement n) {
     free(n);
 }
+MapKeyElement copyDouble(MapKeyElement n) {
+    if (!n) {
+        return NULL;
+    }
+    double *copy = malloc(sizeof(*copy));
+    if (!copy) {
+        return NULL;
+    }
+    *copy = *(double *) n;
+    return copy;
+}
 
 int compareInts(MapKeyElement n1, MapKeyElement n2) {
     return (*(int *) n1 - *(int *) n2);
 }
 
+void freeDouble(MapKeyElement n) {
+    free(n);
+}
 
-
-int main() 
+ChessResult chessEndTournament (ChessSystem chess, int tournament_id)
 {
-    return 0;
+    if(chess == NULL){
+        return CHESS_NULL_ARGUMENT;
+    }
+    if(tournament_id < 0){
+        return CHESS_INVALID_ID;
+    }
+    if(!mapContains(chess->tournaments, &tournament_id)){
+        return CHESS_TOURNAMENT_NOT_EXIST;
+    }
+    Tournament* curr_tournament = mapGet(chess->tournaments, &tournament_id);
+    if(curr_tournament->winner != TOURNAMENT_NOT_ENDED){
+        return CHESS_TOURNAMENT_ENDED;
+    }
+    if(mapGetSize(curr_tournament->games) == 0){
+        return CHESS_NO_GAMES;
+    }
+    tournamentEnd(curr_tournament);
+    return CHESS_SUCCESS;
+}
+double chessCalculateAveragePlayTime (ChessSystem chess, int player_id, ChessResult* chess_result)
+{
+    if(chess == NULL){
+        *chess_result = CHESS_NULL_ARGUMENT;
+        return NO_AVERAGE;
+    }
+    if(player_id <= 0){
+        *chess_result =  CHESS_INVALID_ID;
+        return NO_AVERAGE;
+    }
+    int sum =0;
+    int count=0;
+    MAP_FOREACH(int *,iter,chess->tournaments){
+        Tournament* curr_tournament=(Tournament*)mapGet(chess->tournaments,iter);
+        if(mapContains(curr_tournament->players_stats, &player_id)){
+            int *data=mapGet(curr_tournament->players_stats, &player_id);
+            sum += data[TIME_PLAYED];
+            count += data[WINS] + data[LOSSES] + data[DRAWS];
+        }
+        free(iter);
+    }
+    if(!count){
+        *chess_result = CHESS_PLAYER_NOT_EXIST;
+        return NO_AVERAGE;
+    }
+    *chess_result = CHESS_SUCCESS;
+    return ((double)sum)/count;
+}
+ChessResult chessSavePlayersLevels (ChessSystem chess, FILE* file)
+{
+    if(chess == NULL || file == NULL){
+        return CHESS_NULL_ARGUMENT;
+    }
+    ChessResult chess_result;
+    Map players_ranked=computePlayersRank(chess, &chess_result);
+    if(chess_result == CHESS_OUT_OF_MEMORY){
+    return CHESS_OUT_OF_MEMORY;
+    }
+    printToFile(players_ranked, file, &chess_result);
+    if(chess_result == CHESS_SAVE_FAILURE){
+        return CHESS_SAVE_FAILURE;
+    }
+    mapDestroy(players_ranked);
+    return CHESS_SUCCESS;
+}
+static void printToFile(Map players_ranked, FILE* file, ChessResult* result)
+{
+    int id=-1;
+    while(mapGetSize(players_ranked) > 0)
+    {
+        double curr_max = FindMaxData(players_ranked, &id);
+        assert(id != -1);
+        if (fprintf(file, "%d %0.2f\n",id, curr_max) < 0) {
+            *result = CHESS_SAVE_FAILURE;
+            return;
+        }
+    }
+}
+static double FindMaxData(Map players_ranked, int *id)
+{
+    assert(players_ranked != NULL);
+    int *first_id = (int*)mapGetFirst(players_ranked); //Initiallize first max to the first player
+    double max = *(double*)mapGet(players_ranked, first_id); 
+    int maxid = *first_id;
+    free(first_id);
+    MAP_FOREACH(int *,iter,players_ranked){
+        double* level = (double*)mapGet(players_ranked, iter);
+        if(*level > max){
+            max = *level;
+            maxid = *iter;
+        }
+        free(iter);
+    }
+    mapRemove(players_ranked, &maxid);
+    *id = maxid;
+    return max;
+}
+static Map computePlayersRank(ChessSystem chess, ChessResult* chess_result)
+{
+    Map players_ranked=mapCreate(copyDouble, copyKeyInt, freeDouble, freeInt ,compareInts);
+    if(players_ranked == NULL){
+        *chess_result = CHESS_OUT_OF_MEMORY;
+    }
+    MAP_FOREACH(int *,iter_tournaments,chess->tournaments){
+        Tournament* curr_tournament=(Tournament*)mapGet(chess->tournaments,iter_tournaments);
+        MAP_FOREACH(int *,iter_players,curr_tournament->players_stats){
+            int *data=mapGet(curr_tournament->players_stats, iter_players);
+            int num_games = data[WINS] + data[LOSSES] + data[DRAWS];
+            if (num_games == 0) {
+                free(iter_players);
+                continue; //Deleted player - no games played
+            }
+            double rank = (double)(6 * data[WINS] - 10 * data[LOSSES] + 2 * data[DRAWS])/num_games;
+            if(mapContains(players_ranked,iter_players)){
+                double* data=mapGet(players_ranked,iter_players);
+                *data += rank;
+            }
+            else{
+                if(mapPut(players_ranked,iter_players,&rank) != MAP_SUCCESS){
+                    mapDestroy(players_ranked);
+                     *chess_result = CHESS_OUT_OF_MEMORY;//It has to be memory error because iter_players and rank aren't NULL
+                }   
+            }
+            free(iter_players);
+        }
+        free(iter_tournaments);
+    }
+    *chess_result = CHESS_SUCCESS;
+    return players_ranked;
+}
+
+ChessResult chessSaveTournamentStatistics (ChessSystem chess, char* path_file)
+{
+    if (chess == NULL || path_file == NULL) {
+        return CHESS_NULL_ARGUMENT;
+    }
+    FILE *file = fopen(path_file, "w");
+    if (file == NULL) {
+        return CHESS_SAVE_FAILURE;
+    }
+    int count_ended_tournaments = 0;
+    ChessResult result;
+    MAP_FOREACH(int*, iter, chess->tournaments) {
+        Tournament* tournament=mapGet(chess->tournaments, iter);
+        if (tournament->winner == TOURNAMENT_NOT_ENDED) {
+            free(iter);
+            continue;
+        }
+        count_ended_tournaments++;
+        result = printTournamnentStats(tournament, file);
+        if (result == CHESS_SAVE_FAILURE) {
+            fclose(file);
+            free(iter);
+            return result;
+        }
+        free(iter);
+    }
+    fclose(file);
+    if (count_ended_tournaments == 0) {
+        return CHESS_NO_TOURNAMENTS_ENDED;
+    }
+    return CHESS_SUCCESS;
+}
+
+static ChessResult printTournamnentStats(Tournament* tournament, FILE* file)
+{
+    assert(tournament != NULL);
+    assert(file != NULL);
+    if (fprintf(file, "%d\n",tournament->winner) < 0) {
+        return CHESS_SAVE_FAILURE;
+    } 
+    double avg_game_time;
+    int longest_game = computeGamesStats(tournament->games, &avg_game_time);
+    if (fprintf(file, "%d\n%0.2f\n",longest_game, avg_game_time) < 0) {
+        return CHESS_SAVE_FAILURE;
+    }
+    if (fprintf(file, "%s\n",tournament->location) < 0) {
+        return CHESS_SAVE_FAILURE;
+    } 
+    if (fprintf(file, "%d\n",mapGetSize(tournament->games)) < 0) {
+        return CHESS_SAVE_FAILURE;
+    } 
+    if (fprintf(file, "%d\n",mapGetSize(tournament->players_stats)) < 0) {
+        return CHESS_SAVE_FAILURE;
+    } 
+    return CHESS_SUCCESS;
+}
+
+static int computeGamesStats(Map games, double* avg_game_time) {
+    int max = 0, sum_duartion = 0;
+    MAP_FOREACH(int*, iter, games) {
+        Game* game=mapGet(games, iter);
+        sum_duartion += game->duration;
+        if (game->duration > max) {
+            max = game->duration;
+        }
+        free(iter);
+    }
+    *avg_game_time = ((double)sum_duartion) / mapGetSize(games);
+    return max;
 }

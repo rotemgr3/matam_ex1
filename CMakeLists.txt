@@ -3,7 +3,7 @@
 cmake_minimum_required(VERSION 3.0.0)
 
 # Set <PROJNAME> to be your project name. We set C here as the target language.
-project(map_prog VERSION 0.1.0 LANGUAGES C)
+project(chess_prog VERSION 0.1.0 LANGUAGES C)
 
 # If you want to see "under the hood" of CMake, uncomment this:
 # set(CMAKE_VERBOSE_MAKEFILE ON)
@@ -16,6 +16,7 @@ set(MTM_FLAGS_RELEASE "${MTM_FLAGS_DEBUG} -DNDEBUG")
 set(CMAKE_C_FLAGS ${MTM_FLAGS_DEBUG})
 
 # Add the names of your source files here
-set(C_FILES map.h map.c map_example_test.c test_utilities.h)
-
-add_executable(map_prog ${C_FILES})
+set(C_FILES  chessSystemTestsExample.c game.c tournament.c chessSystem.c)
+link_directories(./libmap_for_csl3)
+add_executable(chess_prog ${C_FILES})
+target_link_libraries(chess_prog map)

@@ -74,9 +74,22 @@ include CMakeFiles/map_prog.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/map_prog.dir/flags.make
 
+CMakeFiles/map_prog.dir/matam_ex1/map_example_test.c.o: CMakeFiles/map_prog.dir/flags.make
+CMakeFiles/map_prog.dir/matam_ex1/map_example_test.c.o: ../matam_ex1/map_example_test.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/rotem.green/mtm/ex1/wet/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/map_prog.dir/matam_ex1/map_example_test.c.o"
+	/usr/local/bin/x86_64-unknown-linux-gnu-gcc-5.5.0 $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/map_prog.dir/matam_ex1/map_example_test.c.o   -c /home/rotem.green/mtm/ex1/wet/matam_ex1/map_example_test.c
+
+CMakeFiles/map_prog.dir/matam_ex1/map_example_test.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/map_prog.dir/matam_ex1/map_example_test.c.i"
+	/usr/local/bin/x86_64-unknown-linux-gnu-gcc-5.5.0 $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/rotem.green/mtm/ex1/wet/matam_ex1/map_example_test.c > CMakeFiles/map_prog.dir/matam_ex1/map_example_test.c.i
+
+CMakeFiles/map_prog.dir/matam_ex1/map_example_test.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/map_prog.dir/matam_ex1/map_example_test.c.s"
+	/usr/local/bin/x86_64-unknown-linux-gnu-gcc-5.5.0 $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/rotem.green/mtm/ex1/wet/matam_ex1/map_example_test.c -o CMakeFiles/map_prog.dir/matam_ex1/map_example_test.c.s
+
 CMakeFiles/map_prog.dir/map.c.o: CMakeFiles/map_prog.dir/flags.make
 CMakeFiles/map_prog.dir/map.c.o: ../map.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/rotem.green/mtm/ex1/wet/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/map_prog.dir/map.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/rotem.green/mtm/ex1/wet/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/map_prog.dir/map.c.o"
 	/usr/local/bin/x86_64-unknown-linux-gnu-gcc-5.5.0 $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/map_prog.dir/map.c.o   -c /home/rotem.green/mtm/ex1/wet/map.c
 
 CMakeFiles/map_prog.dir/map.c.i: cmake_force
@@ -87,29 +100,16 @@ CMakeFiles/map_prog.dir/map.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/map_prog.dir/map.c.s"
 	/usr/local/bin/x86_64-unknown-linux-gnu-gcc-5.5.0 $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/rotem.green/mtm/ex1/wet/map.c -o CMakeFiles/map_prog.dir/map.c.s
 
-CMakeFiles/map_prog.dir/map_example_test.c.o: CMakeFiles/map_prog.dir/flags.make
-CMakeFiles/map_prog.dir/map_example_test.c.o: ../map_example_test.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/rotem.green/mtm/ex1/wet/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/map_prog.dir/map_example_test.c.o"
-	/usr/local/bin/x86_64-unknown-linux-gnu-gcc-5.5.0 $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/map_prog.dir/map_example_test.c.o   -c /home/rotem.green/mtm/ex1/wet/map_example_test.c
-
-CMakeFiles/map_prog.dir/map_example_test.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/map_prog.dir/map_example_test.c.i"
-	/usr/local/bin/x86_64-unknown-linux-gnu-gcc-5.5.0 $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/rotem.green/mtm/ex1/wet/map_example_test.c > CMakeFiles/map_prog.dir/map_example_test.c.i
-
-CMakeFiles/map_prog.dir/map_example_test.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/map_prog.dir/map_example_test.c.s"
-	/usr/local/bin/x86_64-unknown-linux-gnu-gcc-5.5.0 $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/rotem.green/mtm/ex1/wet/map_example_test.c -o CMakeFiles/map_prog.dir/map_example_test.c.s
-
 # Object files for target map_prog
 map_prog_OBJECTS = \
-"CMakeFiles/map_prog.dir/map.c.o" \
-"CMakeFiles/map_prog.dir/map_example_test.c.o"
+"CMakeFiles/map_prog.dir/matam_ex1/map_example_test.c.o" \
+"CMakeFiles/map_prog.dir/map.c.o"
 
 # External object files for target map_prog
 map_prog_EXTERNAL_OBJECTS =
 
+map_prog: CMakeFiles/map_prog.dir/matam_ex1/map_example_test.c.o
 map_prog: CMakeFiles/map_prog.dir/map.c.o
-map_prog: CMakeFiles/map_prog.dir/map_example_test.c.o
 map_prog: CMakeFiles/map_prog.dir/build.make
 map_prog: CMakeFiles/map_prog.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/rotem.green/mtm/ex1/wet/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking C executable map_prog"

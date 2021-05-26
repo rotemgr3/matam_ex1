@@ -4,7 +4,7 @@
 CMakeFiles/map_prog.dir/map.c.o: ../map.c
 CMakeFiles/map_prog.dir/map.c.o: ../map.h
 
-CMakeFiles/map_prog.dir/map_example_test.c.o: ../map.h
-CMakeFiles/map_prog.dir/map_example_test.c.o: ../map_example_test.c
-CMakeFiles/map_prog.dir/map_example_test.c.o: ../test_utilities.h
+CMakeFiles/map_prog.dir/matam_ex1/map_example_test.c.o: ../matam_ex1/map.h
+CMakeFiles/map_prog.dir/matam_ex1/map_example_test.c.o: ../matam_ex1/map_example_test.c
+CMakeFiles/map_prog.dir/matam_ex1/map_example_test.c.o: ../matam_ex1/test_utilities.h
 

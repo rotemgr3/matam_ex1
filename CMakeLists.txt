@@ -16,7 +16,5 @@ set(MTM_FLAGS_RELEASE "${MTM_FLAGS_DEBUG} -DNDEBUG")
 set(CMAKE_C_FLAGS ${MTM_FLAGS_DEBUG})
 
 # Add the names of your source files here
-set(C_FILES  chessSystemTestsExample.c game.c tournament.c chessSystem.c)
-link_directories(./libmap_for_csl3)
-add_executable(chess_prog ${C_FILES})
-target_link_libraries(chess_prog map)
+set(C_FILES  matam_ex1/map_example_test.c map.c)
+add_executable(map_prog ${C_FILES})

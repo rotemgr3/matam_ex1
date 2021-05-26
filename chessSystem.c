@@ -56,17 +56,20 @@ void chessDestroy(ChessSystem chess)
 ChessResult chessAddTournament (ChessSystem chess, int tournament_id,
                                 int max_games_per_player, const char* tournament_location)
 {
-    if (chess == NULL) {
+    if (chess == NULL || tournament_location == NULL) {
         return CHESS_NULL_ARGUMENT;
     }
     if (tournament_id <= 0) {
         return CHESS_INVALID_ID;
     }
+    if(mapContains(chess->tournaments, &tournament_id)){
+        return CHESS_TOURNAMENT_ALREADY_EXISTS;
+    }
     if(!checkLocation(tournament_location)) {
         return CHESS_INVALID_LOCATION;
     }
-    if(mapContains(chess->tournaments, &tournament_id)){
-        return CHESS_TOURNAMENT_ALREADY_EXISTS;
+    if (max_games_per_player <= 0) {
+        return CHESS_INVALID_MAX_GAMES;
     }
     Tournament *new_tournament=tournamentCreate(copyKeyInt,
                                                freeInt,
@@ -176,8 +179,11 @@ ChessResult chessRemovePlayer(ChessSystem chess, int player_id)
     int count=0;
     MAP_FOREACH(int *,iter,chess->tournaments){
         Tournament* curr_tournament=(Tournament*)mapGet(chess->tournaments,iter);
+        if (mapContains(curr_tournament->players_stats, &player_id)) {
+            count += ((int*)mapGet(curr_tournament->players_stats,&player_id))[TIME_PLAYED] > 0;
+        }
         if(curr_tournament->winner == TOURNAMENT_NOT_ENDED){
-            count += tournamentRemovePlayer(curr_tournament,player_id);
+            tournamentRemovePlayer(curr_tournament,player_id);
         }
         free(iter);
     }
@@ -326,6 +332,13 @@ static Map computePlayersRank(ChessSystem chess, ChessResult* chess_result)
     Map players_ranked=mapCreate(copyDouble, copyKeyInt, freeDouble, freeInt ,compareInts);
     if(players_ranked == NULL){
         *chess_result = CHESS_OUT_OF_MEMORY;
+        return NULL;
+    }
+    Map players_games_count=mapCreate(copyKeyInt, copyKeyInt, freeInt, freeInt ,compareInts);
+    if(players_games_count == NULL){
+        *chess_result = CHESS_OUT_OF_MEMORY;
+        mapDestroy(players_ranked);
+        return NULL;
     }
     MAP_FOREACH(int *,iter_tournaments,chess->tournaments){
         Tournament* curr_tournament=(Tournament*)mapGet(chess->tournaments,iter_tournaments);
@@ -336,22 +349,43 @@ static Map computePlayersRank(ChessSystem chess, ChessResult* chess_result)
                 free(iter_players);
                 continue; //Deleted player - no games played
             }
-            double rank = (double)(6 * data[WINS] - 10 * data[LOSSES] + 2 * data[DRAWS])/num_games;
+            double rank = (double)(6 * data[WINS] - 10 * data[LOSSES] + 2 * data[DRAWS]);
             if(mapContains(players_ranked,iter_players)){
-                double* data=mapGet(players_ranked,iter_players);
-                *data += rank;
+                double* curr_rank=mapGet(players_ranked,iter_players);
+                int* curr_games=mapGet(players_games_count,iter_players);
+                *curr_rank += rank;
+                *curr_games += num_games;
             }
             else{
                 if(mapPut(players_ranked,iter_players,&rank) != MAP_SUCCESS){
                     mapDestroy(players_ranked);
-                     *chess_result = CHESS_OUT_OF_MEMORY;//It has to be memory error because iter_players and rank aren't NULL
-                }   
+                    mapDestroy(players_games_count);
+                    *chess_result = CHESS_OUT_OF_MEMORY;//It has to be memory error because iter_players and rank aren't NULL
+                    free(iter_players);
+                    free(iter_tournaments);
+                    return NULL;
+                }
+                if(mapPut(players_games_count,iter_players,&num_games) != MAP_SUCCESS){
+                    mapDestroy(players_ranked);
+                    mapDestroy(players_games_count);
+                    *chess_result = CHESS_OUT_OF_MEMORY;//It has to be memory error because iter_players and rank aren't NULL
+                    free(iter_players);
+                    free(iter_tournaments);
+                    return NULL;
+                }
             }
             free(iter_players);
         }
         free(iter_tournaments);
     }
     *chess_result = CHESS_SUCCESS;
+    MAP_FOREACH(int *,iter_players,players_ranked){
+        double *rank=mapGet(players_ranked, iter_players);
+        int *num_of_games=mapGet(players_games_count, iter_players);
+        *rank = *rank / *num_of_games;
+        free(iter_players);
+    }
+    mapDestroy(players_games_count);
     return players_ranked;
 }
 

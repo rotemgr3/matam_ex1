@@ -101,12 +101,12 @@ Map mapCopy(Map map)
     if (copy == NULL) {
         return NULL;
     }
-    copy->keys = realloc(map->keys, sizeof(MapKeyElement) * map->max_size);
+    copy->keys = realloc(copy->keys, sizeof(MapKeyElement) * map->max_size);
     if (copy->keys == NULL) {
         mapDestroy(copy);
         return NULL;
     }
-    copy->data = realloc(map->data, sizeof(MapDataElement) * map->max_size);
+    copy->data = realloc(copy->data, sizeof(MapDataElement) * map->max_size);
     if (copy->data == NULL) {
         mapDestroy(copy);
         return NULL;
@@ -209,6 +209,7 @@ static void mapAdd(Map map,MapKeyElement keyElement,MapDataElement new_data)
     }
     map->keys[i]=keyElement;
     map->data[i]=new_data;
+    map->size++;
 }
 
 MapResult mapPut(Map map, MapKeyElement keyElement, MapDataElement dataElement)
@@ -220,11 +221,14 @@ MapResult mapPut(Map map, MapKeyElement keyElement, MapDataElement dataElement)
     if (new_data == NULL) {
         return MAP_OUT_OF_MEMORY;
     }
-    int i = mapGetIndex(map, keyElement);
-    if (i != -1) {
-        MapDataElement old_data = mapGet(map, keyElement);
-        map->freeDataElement(old_data);
-        map->keys[i] = new_data;
+    MapKeyElement copy_key = map->copyKeyElement(keyElement);
+        if (copy_key == NULL) {
+            map->freeDataElement(new_data);
+            return MAP_OUT_OF_MEMORY;
+        }
+    if (mapContains(map, keyElement)) {
+        mapRemove(map,keyElement);
+        mapAdd(map, copy_key, new_data);
         return MAP_SUCCESS;
     }
     else {
@@ -233,15 +237,9 @@ MapResult mapPut(Map map, MapKeyElement keyElement, MapDataElement dataElement)
                 return MAP_OUT_OF_MEMORY;
             }
         }
-        MapKeyElement copy_key = map->copyKeyElement(keyElement);
-        if (copy_key == NULL) {
-            return MAP_OUT_OF_MEMORY;
-        }
         mapAdd(map, copy_key, new_data);
-        map->size++;
         return MAP_SUCCESS;
     }
-    
 }
 
 MapResult mapRemove(Map map, MapKeyElement keyElement)
@@ -262,7 +260,6 @@ MapResult mapRemove(Map map, MapKeyElement keyElement)
     }
     map->size--;
     return MAP_SUCCESS;
-    
 }
 
 MapKeyElement mapGetFirst(Map map)
@@ -279,7 +276,6 @@ MapKeyElement mapGetNext(Map map)
     if(map==NULL){
         return NULL;
     }
-    
     if (map->iterator >= map->size) {
         return NULL;
     }
@@ -296,6 +292,7 @@ MapResult mapClear(Map map)
         map->freeKeyElement(map->keys[i]);
         map->freeDataElement(map->data[i]);
     }
+    map->size = 0;
     return MAP_SUCCESS;
 }
 

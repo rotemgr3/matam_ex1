@@ -73,17 +73,6 @@ CMAKE_BINARY_DIR = /home/rotem.green/mtm/ex1/wet/build
 #=============================================================================
 # Targets provided globally by CMake.
 
-# Special rule for the target rebuild_cache
-rebuild_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
-	/home/mtm/cmake-3.17.0-Linux-x86_64/bin/cmake --regenerate-during-build -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
-.PHONY : rebuild_cache
-
-# Special rule for the target rebuild_cache
-rebuild_cache/fast: rebuild_cache
-
-.PHONY : rebuild_cache/fast
-
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake cache editor..."
@@ -94,6 +83,17 @@ edit_cache:
 edit_cache/fast: edit_cache
 
 .PHONY : edit_cache/fast
+
+# Special rule for the target rebuild_cache
+rebuild_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
+	/home/mtm/cmake-3.17.0-Linux-x86_64/bin/cmake --regenerate-during-build -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+.PHONY : rebuild_cache
+
+# Special rule for the target rebuild_cache
+rebuild_cache/fast: rebuild_cache
+
+.PHONY : rebuild_cache/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -128,125 +128,71 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named chess_prog
+# Target rules for targets named map_prog
 
 # Build rule for target.
-chess_prog: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 chess_prog
-.PHONY : chess_prog
+map_prog: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 map_prog
+.PHONY : map_prog
 
 # fast build rule for target.
-chess_prog/fast:
-	$(MAKE) -f CMakeFiles/chess_prog.dir/build.make CMakeFiles/chess_prog.dir/build
-.PHONY : chess_prog/fast
+map_prog/fast:
+	$(MAKE) -f CMakeFiles/map_prog.dir/build.make CMakeFiles/map_prog.dir/build
+.PHONY : map_prog/fast
 
-chessSystem.o: chessSystem.c.o
+map.o: map.c.o
 
-.PHONY : chessSystem.o
-
-# target to build an object file
-chessSystem.c.o:
-	$(MAKE) -f CMakeFiles/chess_prog.dir/build.make CMakeFiles/chess_prog.dir/chessSystem.c.o
-.PHONY : chessSystem.c.o
-
-chessSystem.i: chessSystem.c.i
-
-.PHONY : chessSystem.i
-
-# target to preprocess a source file
-chessSystem.c.i:
-	$(MAKE) -f CMakeFiles/chess_prog.dir/build.make CMakeFiles/chess_prog.dir/chessSystem.c.i
-.PHONY : chessSystem.c.i
-
-chessSystem.s: chessSystem.c.s
-
-.PHONY : chessSystem.s
-
-# target to generate assembly for a file
-chessSystem.c.s:
-	$(MAKE) -f CMakeFiles/chess_prog.dir/build.make CMakeFiles/chess_prog.dir/chessSystem.c.s
-.PHONY : chessSystem.c.s
-
-chessSystemTestsExample.o: chessSystemTestsExample.c.o
-
-.PHONY : chessSystemTestsExample.o
+.PHONY : map.o
 
 # target to build an object file
-chessSystemTestsExample.c.o:
-	$(MAKE) -f CMakeFiles/chess_prog.dir/build.make CMakeFiles/chess_prog.dir/chessSystemTestsExample.c.o
-.PHONY : chessSystemTestsExample.c.o
+map.c.o:
+	$(MAKE) -f CMakeFiles/map_prog.dir/build.make CMakeFiles/map_prog.dir/map.c.o
+.PHONY : map.c.o
 
-chessSystemTestsExample.i: chessSystemTestsExample.c.i
+map.i: map.c.i
 
-.PHONY : chessSystemTestsExample.i
+.PHONY : map.i
 
 # target to preprocess a source file
-chessSystemTestsExample.c.i:
-	$(MAKE) -f CMakeFiles/chess_prog.dir/build.make CMakeFiles/chess_prog.dir/chessSystemTestsExample.c.i
-.PHONY : chessSystemTestsExample.c.i
+map.c.i:
+	$(MAKE) -f CMakeFiles/map_prog.dir/build.make CMakeFiles/map_prog.dir/map.c.i
+.PHONY : map.c.i
 
-chessSystemTestsExample.s: chessSystemTestsExample.c.s
+map.s: map.c.s
 
-.PHONY : chessSystemTestsExample.s
+.PHONY : map.s
 
 # target to generate assembly for a file
-chessSystemTestsExample.c.s:
-	$(MAKE) -f CMakeFiles/chess_prog.dir/build.make CMakeFiles/chess_prog.dir/chessSystemTestsExample.c.s
-.PHONY : chessSystemTestsExample.c.s
+map.c.s:
+	$(MAKE) -f CMakeFiles/map_prog.dir/build.make CMakeFiles/map_prog.dir/map.c.s
+.PHONY : map.c.s
 
-game.o: game.c.o
+matam_ex1/map_example_test.o: matam_ex1/map_example_test.c.o
 
-.PHONY : game.o
+.PHONY : matam_ex1/map_example_test.o
 
 # target to build an object file
-game.c.o:
-	$(MAKE) -f CMakeFiles/chess_prog.dir/build.make CMakeFiles/chess_prog.dir/game.c.o
-.PHONY : game.c.o
+matam_ex1/map_example_test.c.o:
+	$(MAKE) -f CMakeFiles/map_prog.dir/build.make CMakeFiles/map_prog.dir/matam_ex1/map_example_test.c.o
+.PHONY : matam_ex1/map_example_test.c.o
 
-game.i: game.c.i
+matam_ex1/map_example_test.i: matam_ex1/map_example_test.c.i
 
-.PHONY : game.i
-
-# target to preprocess a source file
-game.c.i:
-	$(MAKE) -f CMakeFiles/chess_prog.dir/build.make CMakeFiles/chess_prog.dir/game.c.i
-.PHONY : game.c.i
-
-game.s: game.c.s
-
-.PHONY : game.s
-
-# target to generate assembly for a file
-game.c.s:
-	$(MAKE) -f CMakeFiles/chess_prog.dir/build.make CMakeFiles/chess_prog.dir/game.c.s
-.PHONY : game.c.s
-
-tournament.o: tournament.c.o
-
-.PHONY : tournament.o
-
-# target to build an object file
-tournament.c.o:
-	$(MAKE) -f CMakeFiles/chess_prog.dir/build.make CMakeFiles/chess_prog.dir/tournament.c.o
-.PHONY : tournament.c.o
-
-tournament.i: tournament.c.i
-
-.PHONY : tournament.i
+.PHONY : matam_ex1/map_example_test.i
 
 # target to preprocess a source file
-tournament.c.i:
-	$(MAKE) -f CMakeFiles/chess_prog.dir/build.make CMakeFiles/chess_prog.dir/tournament.c.i
-.PHONY : tournament.c.i
+matam_ex1/map_example_test.c.i:
+	$(MAKE) -f CMakeFiles/map_prog.dir/build.make CMakeFiles/map_prog.dir/matam_ex1/map_example_test.c.i
+.PHONY : matam_ex1/map_example_test.c.i
 
-tournament.s: tournament.c.s
+matam_ex1/map_example_test.s: matam_ex1/map_example_test.c.s
 
-.PHONY : tournament.s
+.PHONY : matam_ex1/map_example_test.s
 
 # target to generate assembly for a file
-tournament.c.s:
-	$(MAKE) -f CMakeFiles/chess_prog.dir/build.make CMakeFiles/chess_prog.dir/tournament.c.s
-.PHONY : tournament.c.s
+matam_ex1/map_example_test.c.s:
+	$(MAKE) -f CMakeFiles/map_prog.dir/build.make CMakeFiles/map_prog.dir/matam_ex1/map_example_test.c.s
+.PHONY : matam_ex1/map_example_test.c.s
 
 # Help Target
 help:
@@ -256,19 +202,13 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... chess_prog"
-	@echo "... chessSystem.o"
-	@echo "... chessSystem.i"
-	@echo "... chessSystem.s"
-	@echo "... chessSystemTestsExample.o"
-	@echo "... chessSystemTestsExample.i"
-	@echo "... chessSystemTestsExample.s"
-	@echo "... game.o"
-	@echo "... game.i"
-	@echo "... game.s"
-	@echo "... tournament.o"
-	@echo "... tournament.i"
-	@echo "... tournament.s"
+	@echo "... map_prog"
+	@echo "... map.o"
+	@echo "... map.i"
+	@echo "... map.s"
+	@echo "... matam_ex1/map_example_test.o"
+	@echo "... matam_ex1/map_example_test.i"
+	@echo "... matam_ex1/map_example_test.s"
 .PHONY : help
 
 

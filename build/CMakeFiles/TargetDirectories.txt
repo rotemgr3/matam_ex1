@@ -1,3 +1,3 @@
-/home/rotem.green/mtm/ex1/wet/build/CMakeFiles/rebuild_cache.dir
 /home/rotem.green/mtm/ex1/wet/build/CMakeFiles/edit_cache.dir
-/home/rotem.green/mtm/ex1/wet/build/CMakeFiles/chess_prog.dir
+/home/rotem.green/mtm/ex1/wet/build/CMakeFiles/rebuild_cache.dir
+/home/rotem.green/mtm/ex1/wet/build/CMakeFiles/map_prog.dir

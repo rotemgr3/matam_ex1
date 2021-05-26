@@ -1,6 +1,6 @@
 file(REMOVE_RECURSE
   "CMakeFiles/map_prog.dir/map.c.o"
-  "CMakeFiles/map_prog.dir/map_example_test.c.o"
+  "CMakeFiles/map_prog.dir/matam_ex1/map_example_test.c.o"
   "map_prog"
   "map_prog.pdb"
 )

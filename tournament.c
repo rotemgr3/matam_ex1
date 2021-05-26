@@ -184,21 +184,31 @@ bool tournamentRemovePlayer(Tournament* tournament,int player_id)
     bool exists_in_tournament = false;
     MAP_FOREACH(int *, iter, tournament->games) {
         Game* game = (Game*)mapGet(tournament->games, iter);
-            if (game->players_id[0] == player_id){
+        Winner curr_winner = game->result;
+        if (game->players_id[0] == player_id){
             game->result= SECOND_PLAYER;
             game->players_id[0]= TOURNAMENT_DELETED_PLAYER;
             exists_in_tournament = true;
             if (game->players_id[1] != TOURNAMENT_DELETED_PLAYER) {
-                updateStats(tournament->players_stats, game->players_id[1], 1, 0, 0, 0);
+                if (curr_winner == DRAW) {
+                    updateStats(tournament->players_stats, game->players_id[1], 1, 0, -1, 0);
+                }
+                else if (curr_winner == FIRST_PLAYER) {
+                    updateStats(tournament->players_stats, game->players_id[1], 1, -1, 0, 0);
+                }
             }
-             
-        }
+        }      
         if (game->players_id[1] == player_id){
             game->result= FIRST_PLAYER;
             game->players_id[1]= TOURNAMENT_DELETED_PLAYER;
             exists_in_tournament = true;
             if (game->players_id[0] != TOURNAMENT_DELETED_PLAYER) {
-                updateStats(tournament->players_stats, game->players_id[0], 1, 0, 0, 0);
+                if (curr_winner == DRAW) {
+                    updateStats(tournament->players_stats, game->players_id[0], 1, 0, -1, 0);
+                }
+                else if (curr_winner == SECOND_PLAYER) {
+                    updateStats(tournament->players_stats, game->players_id[0], 1, -1, 0, 0);
+                }
             }
         }
         free(iter);

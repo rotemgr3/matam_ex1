@@ -5,7 +5,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
   "/home/rotem.green/mtm/ex1/wet/map.c" "/home/rotem.green/mtm/ex1/wet/build/CMakeFiles/map_prog.dir/map.c.o"
-  "/home/rotem.green/mtm/ex1/wet/map_example_test.c" "/home/rotem.green/mtm/ex1/wet/build/CMakeFiles/map_prog.dir/map_example_test.c.o"
+  "/home/rotem.green/mtm/ex1/wet/matam_ex1/map_example_test.c" "/home/rotem.green/mtm/ex1/wet/build/CMakeFiles/map_prog.dir/matam_ex1/map_example_test.c.o"
   )
 set(CMAKE_C_COMPILER_ID "GNU")
 
